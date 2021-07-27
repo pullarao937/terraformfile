@@ -19,7 +19,7 @@ resource "aws_vpc" "vpc" {
   instance_tenancy = "default"
 
   tags = {
-    Name = "shiva_vpc_1"
+    Name = "pullarao"
   }
 }
 resource "aws_subnet" "Pub" {
@@ -31,33 +31,33 @@ resource "aws_subnet" "Pub" {
   }
 }
 
-resource "aws_internet_gateway" "igw" {
+resource "aws_internet_gateway" "igv" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "IGW"
+    Name = "igv"
   }
 }
 resource "aws_eip" "ip" {
     vpc  = true
 }
 
-resource "aws_route_table" "rt1" {
+resource "aws_route_table" "rot" {
   vpc_id = aws_vpc.vpc.id
 
   route  {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
+    gateway_id = aws_internet_gateway.igv.id
   }
   tags = {
-      name = "task_route"
+      name = "route"
   }
 }
 
 
 resource "aws_route_table_association" "as_1" {
   subnet_id      = aws_subnet.Pub.id
-  route_table_id = aws_route_table.rt1.id
+  route_table_id = aws_route_table.rot.id
 }
 resource "aws_security_group" "sg" {
   name        = "first-sg"
@@ -80,12 +80,12 @@ resource "aws_security_group" "sg" {
   }
 
   tags = {
-    Name = "fisrst-sg"
+    Name = "sachin"
   }
 }
 
 
-resource "aws_instance" "ubuntu_1" {
+resource "aws_instance" "ubuntu-200" {
   ami  = "ami-0c1a7f89451184c8b"
   instance_type = "t2.micro"
       user_data = <<-EOF
@@ -103,8 +103,8 @@ resource "aws_instance" "ubuntu_1" {
   }
 
   }
-  resource "aws_security_group" "sg_1" {
-  name        = "secound-sg"
+  resource "aws_security_group" "sg_200" {
+  name        = "secound-sg200"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
     ingress {
@@ -130,11 +130,11 @@ resource "aws_instance" "ubuntu_1" {
   }
 
   tags = {
-    Name = "ansible-sg"
+    Name = "ansible-sg200"
   }
 }
 
-resource "aws_instance" "ubuntu2" {
+resource "aws_instance" "ubuntu200" {
   ami  = "ami-0c1a7f89451184c8b"
   instance_type = "t2.micro"
       user_data = <<-EOF
@@ -144,14 +144,14 @@ resource "aws_instance" "ubuntu2" {
       EOF
   associate_public_ip_address = true
   subnet_id = aws_subnet.Pub.id
-  vpc_security_group_ids = [aws_security_group.sg_1.id]
+  vpc_security_group_ids = [aws_security_group.sg_200.id]
   key_name               = "pullarao"
  tags = {
     Name = "apache_server"
   }
 
 }
-resource "aws_instance" "ubuntu_3" {
+resource "aws_instance" "ubuntu_300" {
   ami  = "ami-0c1a7f89451184c8b"
   instance_type = "t3.micro"
       user_data = <<-EOF
@@ -161,20 +161,20 @@ resource "aws_instance" "ubuntu_3" {
       EOF
   associate_public_ip_address = true
   subnet_id = aws_subnet.Pub.id
-  vpc_security_group_ids = [aws_security_group.sg.id]
+  vpc_security_group_ids = [aws_security_group.sg_200.id]
   key_name               = "pullarao"
  tags = {
-    Name = "k8worker_server"
+    Name = "k8worker"
   }
 }
-resource "aws_instance" "ubuntu_4" {
+resource "aws_instance" "ubuntu_400" {
   ami  = "ami-0c1a7f89451184c8b"
   instance_type = "t3.micro"
   associate_public_ip_address = true
   subnet_id = aws_subnet.Pub.id
-  vpc_security_group_ids = [aws_security_group.sg.id]
+  vpc_security_group_ids = [aws_security_group.sg_200.id]
   key_name               = "pullarao"
  tags = {
-    Name = "k8master_server"
+    Name = "k8master"
   }
 }
